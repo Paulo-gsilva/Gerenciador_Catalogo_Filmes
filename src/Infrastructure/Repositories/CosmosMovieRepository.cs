@@ -9,15 +9,15 @@ public class CosmosMovieRepository : IMovieRepository
 {
     private readonly CosmosClient _client;
     private readonly Container _container;
-    private const string DatabaseId = "NetflixCatalog";
-    private const string ContainerId = "Movies";
 
-
-    public CosmosMovieRepository(CosmosClient client)
+    public CosmosMovieRepository(CosmosClient client, string databaseId, string containerId)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
-        var dbResponse = _client.CreateDatabaseIfNotExistsAsync(DatabaseId).GetAwaiter().GetResult();
-        var containerResponse = dbResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties(ContainerId, "/id")).GetAwaiter().GetResult();
+
+        var dbResponse = _client.CreateDatabaseIfNotExistsAsync(databaseId).GetAwaiter().GetResult();
+        var containerResponse = dbResponse.Database.CreateContainerIfNotExistsAsync(
+            new ContainerProperties(containerId, "/id")).GetAwaiter().GetResult();
+
         _container = containerResponse.Container;
     }
 
